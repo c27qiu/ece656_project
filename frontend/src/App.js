@@ -8,7 +8,7 @@ function App() {
 	return (
 		<Router>
 			<Routes>
-				<Route path='/teams/:team' element={<TeamStatsPage />} />
+				<Route path='/team/:id' element={<TeamStatsPage />} />
 				<Route path='/player' element={<PlayerInfoPage />} />
 				<Route path='/' element={<HomePage />} />
 			</Routes>

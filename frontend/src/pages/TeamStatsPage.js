@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
 	Table,
@@ -20,10 +20,20 @@ const useStyles = makeStyles({
 });
 
 function TeamStatsPage() {
-	const { team } = useParams();
-	const decodedTeam = decodeURIComponent(team);
+	const { teamId } = useParams();
+	const decodedTeam = decodeURIComponent(teamId);
 	const style = useStyles();
 	const navigate = useNavigate();
+
+	const [teamInfo, setTeamInfo] = useState([]);
+
+	useEffect(() => {
+		// Fetch the team's info when the component mounts
+		fetch(`http://127.0.0.1:8080/team/${teamId}`)
+			.then((response) => response.json())
+			.then((data) => setTeamInfo(data))
+			.catch((error) => console.error('Error:', error));
+	}, []);
 
 	// Here you would fetch and display the team's stats
 	// For now, we'll just display the team's name
@@ -45,8 +55,8 @@ function TeamStatsPage() {
 									<TableCell>Nickname</TableCell>
 									<TableCell>City</TableCell>
 									<TableCell>State</TableCell>
-									<TableCell>Year Founded</TableCell>
 									<TableCell>Owner</TableCell>
+									<TableCell>Year Founded</TableCell>
 									<TableCell>General Manager</TableCell>
 									<TableCell>Head Coach</TableCell>
 									<TableCell>D League Affiliation</TableCell>
@@ -56,22 +66,31 @@ function TeamStatsPage() {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{/* You would replace this with your actual data */}
-								<TableRow>
-									<TableCell>1</TableCell>
-									<TableCell>ABC</TableCell>
-									<TableCell>Nickname</TableCell>
-									<TableCell>City</TableCell>
-									<TableCell>State</TableCell>
-									<TableCell>2000</TableCell>
-									<TableCell>Owner</TableCell>
-									<TableCell>General Manager</TableCell>
-									<TableCell>Head Coach</TableCell>
-									<TableCell>D League Affiliation</TableCell>
-									<TableCell>Facebook</TableCell>
-									<TableCell>Instagram</TableCell>
-									<TableCell>Twitter</TableCell>
-								</TableRow>
+								{teamInfo.map((team, index) => (
+									<TableRow key={index}>
+										<TableCell>{team.teamID}</TableCell>
+										<TableCell>
+											{team.abbreviation}
+										</TableCell>
+										<TableCell>{team.nickname}</TableCell>
+										<TableCell>{team.city}</TableCell>
+										<TableCell>{team.state}</TableCell>
+										<TableCell>{team.owner}</TableCell>
+										<TableCell>
+											{team.yearFounded}
+										</TableCell>
+										<TableCell>
+											{team.generalManager}
+										</TableCell>
+										<TableCell>{team.headCoach}</TableCell>
+										<TableCell>
+											{team.dLeagueAffiliation}
+										</TableCell>
+										<TableCell>{team.facebook}</TableCell>
+										<TableCell>{team.instagram}</TableCell>
+										<TableCell>{team.twitter}</TableCell>
+									</TableRow>
+								))}
 							</TableBody>
 						</Table>
 					</TableContainer>

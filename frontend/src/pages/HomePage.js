@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import TextField from '@mui/material/TextField';
+import { TextField, Button } from '@mui/material';
 
 function HomePage({ onSearch }) {
 	const [query, setQuery] = useState('');
@@ -8,18 +8,27 @@ function HomePage({ onSearch }) {
 
 	const handleSearch = (event) => {
 		if (event.key === 'Enter') {
-			navigate(`/teams/${encodeURIComponent(query)}`);
+			navigate(`/team/${encodeURIComponent(query)}`);
 		}
 	};
 
 	return (
-		<TextField
-			type='text'
-			onKeyDown={handleSearch}
-			onChange={(e) => setQuery(e.target.value)}
-			placeholder='Search for an NBA team'
-			fullWidth
-		/>
+		<div>
+			<TextField
+				type='text'
+				onKeyDown={handleSearch}
+				onChange={(e) => setQuery(e.target.value)}
+				placeholder='Search for an NBA team'
+				fullWidth
+			/>
+			<Button
+				onClick={() => navigate(`/player`)}
+				variant='contained'
+				color='primary'
+			>
+				Get all NBA players
+			</Button>
+		</div>
 	);
 }
 

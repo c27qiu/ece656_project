@@ -46,17 +46,30 @@ def getPlayer(dbConnection: mysql.connector.connection.MySQLConnection) :
         json_data.append(dict(zip(row_headers,result)))
     return jsonify(json_data)
 
-
+def getTeam(dbConnection: mysql.connector.connection.MySQLConnection, teamId) :
+    cur = dbConnection.cursor()
+    cur.execute("SELECT * FROM TeamInfo WHERE teamID = %s", (teamId,))
+    row_headers=[x[0] for x in cur.description] #this will extract row headers
+    rv = cur.fetchall()
+    json_data=[]
+    for result in rv:
+        json_data.append(dict(zip(row_headers,result)))
+    return jsonify(json_data)
+    
 @app.route('/', methods=['GET'])
 def index():
     logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     return render_template('index.html')
 
-@app.route('/team', methods=['GET'])
-def team():
+# @app.route('/team', methods=['GET'])
+# def team():
+#     logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+#     return render_template('index.html')
+
+@app.route('/team/<id>', methods=['GET'])
+def team(id):
     logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    return render_template('index.html')
-    
+    return getTeam(nbaDBConnection, id)
 
 @app.route('/player', methods=['GET'])
 def player():
