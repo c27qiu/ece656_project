@@ -32,13 +32,13 @@ nbaDBConnection = mysql.connector.connect(
   host=args.mysql_host,
   user=args.mysql_user,
   password=args.mysql_password,
-  database="NBA_NEW",
+  database="ece656_project",
   port="3306",
 )
 
 def getPlayer(dbConnection: mysql.connector.connection.MySQLConnection) :
     cur = dbConnection.cursor()
-    cur.execute("SELECT * FROM Player")
+    cur.execute("SELECT * FROM CurrentPlayerInfo")
     row_headers=[x[0] for x in cur.description] #this will extract row headers
     rv = cur.fetchall()
     json_data=[]
