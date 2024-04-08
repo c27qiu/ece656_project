@@ -56,8 +56,41 @@ def getTeam(dbConnection: mysql.connector.connection.MySQLConnection, teamId) :
     team_json_data=[]
     for result in team_rv:
         team_json_data.append(dict(zip(team_row_headers,result)))
-                
-    cur.execute("SELECT firstName, lastName, height, weight, jersey, position FROM CurrentPlayerInfo WHERE teamID = %s", (teamId,))
+    
+    # cur.execute("SELECT info.firstName, info.lastName FROM CurrentPlayerInfo info INNER JOIN (SELECT player1_id AS player_id FROM gameplays WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) AND player1_team_id = 1610612760 UNION SELECT player2_id FROM gameplays WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) AND player2_team_id = 1610612760 UNION SELECT player3_id FROM gameplays WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) AND player3_team_id = 1610612760 UNION SELECT DISTINCT playerID FROM inactiveplayers WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) AND teamID = 1610612760)AS players ON info.playerID = players.player_id;")
+    # cur.execute("SELECT firstName, lastName, height, weight, jersey, position FROM CurrentPlayerInfo WHERE teamID = %s", (teamId,))
+    cur.execute("""
+    SELECT info.firstName, info.lastName, info.height, info.weight, info.jersey, info.position
+    FROM CurrentPlayerInfo info 
+    INNER JOIN (
+        SELECT player1_id AS player_id 
+        FROM gameplays 
+        WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) 
+        AND player1_team_id = %s 
+
+        UNION 
+
+        SELECT player2_id 
+        FROM gameplays 
+        WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) 
+        AND player2_team_id = %s 
+
+        UNION 
+
+        SELECT player3_id 
+        FROM gameplays 
+        WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) 
+        AND player3_team_id = %s 
+
+        UNION 
+
+        SELECT DISTINCT playerID 
+        FROM inactiveplayers 
+        WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) 
+        AND teamID = %s
+    ) AS players 
+    ON info.playerID = players.player_id;
+    """, (teamId, teamId, teamId, teamId))
     players_row_headers=[x[0] for x in cur.description] #this will extract row headers
     player_rv = cur.fetchall()
     player_json_data=[]
@@ -66,6 +99,48 @@ def getTeam(dbConnection: mysql.connector.connection.MySQLConnection, teamId) :
         
     return jsonify({'team': team_json_data, 'players': player_json_data})
 
+def getTest(dbConnection: mysql.connector.connection.MySQLConnection, teamId) :
+    cur = dbConnection.cursor()
+    cur.execute("""
+    SELECT info.firstName, info.lastName, info.height, info.weight, info.jersey, info.position
+    FROM CurrentPlayerInfo info 
+    INNER JOIN (
+        SELECT player1_id AS player_id 
+        FROM gameplays 
+        WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) 
+        AND player1_team_id = %s 
+
+        UNION 
+
+        SELECT player2_id 
+        FROM gameplays 
+        WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) 
+        AND player2_team_id = %s 
+
+        UNION 
+
+        SELECT player3_id 
+        FROM gameplays 
+        WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) 
+        AND player3_team_id = %s 
+
+        UNION 
+
+        SELECT DISTINCT playerID 
+        FROM inactiveplayers 
+        WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) 
+        AND teamID = %s
+    ) AS players 
+    ON info.playerID = players.player_id;
+    """, (teamId, teamId, teamId, teamId))
+    # cur.execute("SELECT info.firstName, info.lastName FROM CurrentPlayerInfo info INNER JOIN (SELECT player1_id AS player_id FROM gameplays WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) AND player1_team_id = 1610612760 UNION SELECT player2_id FROM gameplays WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) AND player2_team_id = 1610612760 UNION SELECT player3_id FROM gameplays WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) AND player3_team_id = 1610612760 UNION SELECT DISTINCT playerID FROM inactiveplayers WHERE gameID IN (SELECT gameID FROM game WHERE season = 2022) AND teamID = 1610612760)AS players ON info.playerID = players.player_id;", (teamId,))
+    row_headers=[x[0] for x in cur.description] #this will extract row headers
+    rv = cur.fetchall()
+    json_data=[]
+    for result in rv:
+        json_data.append(dict(zip(row_headers,result)))
+    return jsonify(json_data)
+    
 def getAllPlayer(dbConnection: mysql.connector.connection.MySQLConnection) :
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM CurrentPlayerInfo")
@@ -95,6 +170,11 @@ def index():
 def team(id):
     logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     return getTeam(nbaDBConnection, id)
+
+@app.route('/test/<id>', methods=['GET'])
+def test(id):
+    logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    return getTest(nbaDBConnection, id)
 
 @app.route('/players', methods=['GET'])
 def all_players():
