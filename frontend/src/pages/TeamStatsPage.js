@@ -37,7 +37,7 @@ function TeamStatsPage() {
 			.catch((error) => console.error('Error:', error));
 	}, [teamId]);
 
-	// console.log('teamInfo', teamInfo['team'][0]['city']);
+	// console.log('teamInfo', teamInfo['players']);
 
 	return (
 		<div>
@@ -123,8 +123,10 @@ function TeamStatsPage() {
 								<TableRow>
 									<TableCell>Player ID</TableCell>
 									<TableCell>Name</TableCell>
+									<TableCell>Jersey</TableCell>
 									<TableCell>Position</TableCell>
-									<TableCell>Number</TableCell>
+									<TableCell>Height</TableCell>
+									<TableCell>Weight</TableCell>
 									{/* Add more <TableCell> elements for each player attribute you have */}
 								</TableRow>
 							</TableHead>
@@ -134,16 +136,30 @@ function TeamStatsPage() {
 											(player, index) => (
 												<TableRow key={index}>
 													<TableCell>
-														{player.firstName}
+														{player.playerID}
 													</TableCell>
 													<TableCell>
-														{player.lastName}
+														<Button
+															onClick={() =>
+																navigate(
+																	`/player/${player.playerID}`
+																)
+															}
+														>
+															{`${player.firstName} ${player.lastName}`}
+														</Button>
 													</TableCell>
 													<TableCell>
 														{player.jersey}
 													</TableCell>
 													<TableCell>
 														{player.position}
+													</TableCell>
+													<TableCell>
+														{player.height}
+													</TableCell>
+													<TableCell>
+														{player.weight}
 													</TableCell>
 												</TableRow>
 											)
