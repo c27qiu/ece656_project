@@ -25,23 +25,25 @@ function TeamStatsPage() {
 	const style = useStyles();
 	const navigate = useNavigate();
 
-	const [teamInfo, setTeamInfo] = useState([]);
+	const [teamInfo, setTeamInfo] = useState({});
 
 	useEffect(() => {
-		// Fetch the team's info when the component mounts
 		fetch(`http://127.0.0.1:8080/team/${teamId}`)
 			.then((response) => response.json())
-			.then((data) => setTeamInfo(data))
+			.then((data) => {
+				setTeamInfo(data);
+				console.log('data ', data);
+			})
 			.catch((error) => console.error('Error:', error));
-	}, []);
+	}, [teamId]);
 
-	// Here you would fetch and display the team's stats
-	// For now, we'll just display the team's name
+	// console.log('teamInfo', teamInfo['team'][0]['city']);
+
 	return (
 		<div>
 			<h2>
-				{decodedTeam
-					? `Stats for ${decodedTeam}`
+				{decodedTeam && 'team' in teamInfo
+					? `Stats for ${teamInfo['team'][0]['city']} ${teamInfo['team'][0]['nickname']}`
 					: 'Please search for a team'}
 			</h2>
 			{decodedTeam && (
@@ -66,36 +68,56 @@ function TeamStatsPage() {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{teamInfo.map((team, index) => (
-									<TableRow key={index}>
-										<TableCell>{team.teamID}</TableCell>
-										<TableCell>
-											{team.abbreviation}
-										</TableCell>
-										<TableCell>{team.nickname}</TableCell>
-										<TableCell>{team.city}</TableCell>
-										<TableCell>{team.state}</TableCell>
-										<TableCell>{team.owner}</TableCell>
-										<TableCell>
-											{team.yearFounded}
-										</TableCell>
-										<TableCell>
-											{team.generalManager}
-										</TableCell>
-										<TableCell>{team.headCoach}</TableCell>
-										<TableCell>
-											{team.dLeagueAffiliation}
-										</TableCell>
-										<TableCell>{team.facebook}</TableCell>
-										<TableCell>{team.instagram}</TableCell>
-										<TableCell>{team.twitter}</TableCell>
-									</TableRow>
-								))}
+								{'team' in teamInfo
+									? teamInfo['team'].map((team, index) => (
+											<TableRow key={index}>
+												<TableCell>
+													{team.teamID}
+												</TableCell>
+												<TableCell>
+													{team.abbreviation}
+												</TableCell>
+												<TableCell>
+													{team.nickname}
+												</TableCell>
+												<TableCell>
+													{team.city}
+												</TableCell>
+												<TableCell>
+													{team.state}
+												</TableCell>
+												<TableCell>
+													{team.owner}
+												</TableCell>
+												<TableCell>
+													{team.yearFounded}
+												</TableCell>
+												<TableCell>
+													{team.generalManager}
+												</TableCell>
+												<TableCell>
+													{team.headCoach}
+												</TableCell>
+												<TableCell>
+													{team.dLeagueAffiliation}
+												</TableCell>
+												<TableCell>
+													{team.facebook}
+												</TableCell>
+												<TableCell>
+													{team.instagram}
+												</TableCell>
+												<TableCell>
+													{team.twitter}
+												</TableCell>
+											</TableRow>
+									  ))
+									: 'LOADING...'}
 							</TableBody>
 						</Table>
 					</TableContainer>
 					<TableContainer component={Paper} className={style.table}>
-						<h2>Team Players</h2>
+						<h2>Team Roster</h2>
 						<Table>
 							<TableHead>
 								<TableRow>
@@ -107,19 +129,26 @@ function TeamStatsPage() {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{/* You would replace this with your actual data */}
-								<TableRow>
-									<TableCell>1</TableCell>
-									<TableCell>
-										<Button
-											onClick={() => navigate(`/player`)}
-										>
-											John Doe
-										</Button>
-									</TableCell>
-									<TableCell>Forward</TableCell>
-									<TableCell>10</TableCell>
-								</TableRow>
+								{'players' in teamInfo
+									? teamInfo['players'].map(
+											(player, index) => (
+												<TableRow key={index}>
+													<TableCell>
+														{player.firstName}
+													</TableCell>
+													<TableCell>
+														{player.lastName}
+													</TableCell>
+													<TableCell>
+														{player.jersey}
+													</TableCell>
+													<TableCell>
+														{player.position}
+													</TableCell>
+												</TableRow>
+											)
+									  )
+									: 'LOADING...'}
 							</TableBody>
 						</Table>
 					</TableContainer>

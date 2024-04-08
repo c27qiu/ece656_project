@@ -24,11 +24,11 @@ function PlayerInfoPage() {
 	const style = useStyles();
 
 	useEffect(() => {
-		fetch(`http://127.0.0.1:8080/player/${playerId}`)
+		fetch(`http://127.0.0.1:8080/players`)
 			.then((response) => response.json())
 			.then((data) => setPlayerInfo(data))
 			.catch((error) => console.error('Error:', error));
-	}, [playerId]);
+	}, []);
 
 	console.log(playerInfo);
 	// if (!playerInfo) {

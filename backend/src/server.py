@@ -36,7 +36,37 @@ nbaDBConnection = mysql.connector.connect(
   port="3306",
 )
 
-def getPlayer(dbConnection: mysql.connector.connection.MySQLConnection) :
+def getAllTeams(dbConnection: mysql.connector.connection.MySQLConnection):
+    cur = dbConnection.cursor()
+    cur.execute("SELECT teamID, nickname, city FROM TeamInfo")
+    row_headers=[x[0] for x in cur.description] #this will extract row headers
+    rv = cur.fetchall()
+    json_data=[]
+    for result in rv:
+        json_data.append(dict(zip(row_headers,result)))
+    
+    return jsonify(json_data)
+
+def getTeam(dbConnection: mysql.connector.connection.MySQLConnection, teamId) :
+    cur = dbConnection.cursor()
+    
+    cur.execute("SELECT * FROM TeamInfo WHERE teamID = %s", (teamId,))
+    team_row_headers=[x[0] for x in cur.description] #this will extract row headers
+    team_rv = cur.fetchall()
+    team_json_data=[]
+    for result in team_rv:
+        team_json_data.append(dict(zip(team_row_headers,result)))
+                
+    cur.execute("SELECT firstName, lastName, height, weight, jersey, position FROM CurrentPlayerInfo WHERE teamID = %s", (teamId,))
+    players_row_headers=[x[0] for x in cur.description] #this will extract row headers
+    player_rv = cur.fetchall()
+    player_json_data=[]
+    for result in player_rv:
+        player_json_data.append(dict(zip(players_row_headers,result)))
+        
+    return jsonify({'team': team_json_data, 'players': player_json_data})
+
+def getAllPlayer(dbConnection: mysql.connector.connection.MySQLConnection) :
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM CurrentPlayerInfo")
     row_headers=[x[0] for x in cur.description] #this will extract row headers
@@ -46,9 +76,9 @@ def getPlayer(dbConnection: mysql.connector.connection.MySQLConnection) :
         json_data.append(dict(zip(row_headers,result)))
     return jsonify(json_data)
 
-def getTeam(dbConnection: mysql.connector.connection.MySQLConnection, teamId) :
+def getPlayer(dbConnection: mysql.connector.connection.MySQLConnection, playerId) :
     cur = dbConnection.cursor()
-    cur.execute("SELECT * FROM TeamInfo WHERE teamID = %s", (teamId,))
+    cur.execute("SELECT * FROM CurrentPlayerInfo WHERE playerID = %s", (playerId,))
     row_headers=[x[0] for x in cur.description] #this will extract row headers
     rv = cur.fetchall()
     json_data=[]
@@ -59,22 +89,22 @@ def getTeam(dbConnection: mysql.connector.connection.MySQLConnection, teamId) :
 @app.route('/', methods=['GET'])
 def index():
     logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    return render_template('index.html')
-
-# @app.route('/team', methods=['GET'])
-# def team():
-#     logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-#     return render_template('index.html')
+    return getAllTeams(nbaDBConnection)
 
 @app.route('/team/<id>', methods=['GET'])
 def team(id):
     logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     return getTeam(nbaDBConnection, id)
 
-@app.route('/player', methods=['GET'])
-def player():
+@app.route('/players', methods=['GET'])
+def all_players():
     logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    return getPlayer(nbaDBConnection)
+    return getAllPlayer(nbaDBConnection)
+
+@app.route('/player/<id>', methods=['GET'])
+def player(id):
+    logging.info("/%s: %s", request.method, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    return getPlayer(nbaDBConnection, id)
 
 if __name__ == '__main__':
    logging.basicConfig(
