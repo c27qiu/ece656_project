@@ -44,7 +44,6 @@ CREATE TABLE CurrentPlayerInfo (
 	activeFromYear DECIMAL(38, 0), 
 	activeToYear DECIMAL(38, 0), 
 	greatest75Flag BOOL NOT NULL
-	-- FOREIGN KEY (teamID) REFERENCES Team(teamID)
 );
 
 CREATE INDEX idx_currentplayerinfo_teamid
@@ -56,7 +55,6 @@ CREATE TABLE HasDraftStats (
 	roundPick INT NOT NULL, 
 	overallPick INT NOT NULL,
 	teamID INT NOT NULL
-	-- FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID)
 )
 
 CREATE TABLE DraftCombineStats (
@@ -65,7 +63,6 @@ CREATE TABLE DraftCombineStats (
 	position VARCHAR(5), 
 	heightWOShoes DECIMAL(38, 2),
 	heightWOShooesFtIn VARCHAR(10),
-	-- TODO: 0.00 should default to NULL
 	heightWShoes DECIMAL(38, 2),
 	heightWShoesFtIn VARCHAR(10),
 	weight DECIMAL(38, 1),
@@ -106,7 +103,6 @@ CREATE TABLE DraftCombineStats (
 	onMoveFifteen VARCHAR(5),
 	onMoveCollege VARCHAR(5),
 	PRIMARY KEY (season, playerID)
-	-- FOREIGN KEY (playerID) REFERENCES CurrentPlayerInfo(playerID),
 );
 
 CREATE TABLE TeamInfo (
@@ -145,7 +141,6 @@ CREATE TABLE PrevTeam (
 	yearFounded DECIMAL(38, 0) NOT NULL, 
 	yearActiveTill DECIMAL(38, 0) NOT NULL,
     PRIMARY KEY(teamID, city, nickname, yearFounded)
-	-- FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID),
 )
 
 CREATE TABLE tempTeamHistory (
@@ -180,42 +175,70 @@ CREATE TABLE GamePlays (
 	player3_team_id INT,
 	videoAvailableFlag BOOL,
 	PRIMARY KEY (gameID, eventNum)
-	-- FOREIGN KEY (playerID) REFERENCES CurrentPlayerInfo(playerID),
-	-- FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID)
 )
 
 CREATE TABLE Outcomes (
 	gameID DECIMAL(38, 0) NOT NULL, 
-	plusMinus DECIMAL(38, 0) NOT NULL, 
-	videoAvailable BOOL NOT NULL, 
-	wl VARCHAR(1), 
-	fgm DECIMAL(38, 0), 
-	fga DECIMAL(38, 0), 
-	fgPct DECIMAL(38, 3), 
-	fg3m DECIMAL(38, 0), 
-	fg3a DECIMAL(38, 0), 
-	fg3Pct DECIMAL(38, 3), 
-	ftm DECIMAL(38, 0), 
-	fta DECIMAL(38, 0), 
-	ftPct DECIMAL(38, 3), 
-	oreb DECIMAL(38, 0), 
-	dreb DECIMAL(38, 0), 
-	reb DECIMAL(38, 0), 
-	ast DECIMAL(38, 0), 
-	stl DECIMAL(38, 0), 
-	blk DECIMAL(38, 0), 
-	tov DECIMAL(38, 0), 
-	pf DECIMAL(38, 0), 
-	pts DECIMAL(38, 0) NOT NULL, 
-    ptsPaint DECIMAL(38, 0) NOT NULL, 
-	pts2ndChance DECIMAL(38, 0) NOT NULL, 
-	ptsFb DECIMAL(38, 0) NOT NULL, 
-	largestLead DECIMAL(38, 0) NOT NULL, 
-	teamTurnovers DECIMAL(38, 0), 
-	totalTurnovers DECIMAL(38, 0), 
-	teamRebounds DECIMAL(38, 0), 
-	ptsOffTo DECIMAL(38, 0),
-    teamWinsLosses VARCHAR(5) NOT NULL
+    plusMinusAway DECIMAL(38, 0) NOT NULL,
+    videoAvailableAway BOOL NOT NULL,
+    wlAway VARCHAR(1),
+    fgmAway DECIMAL(38, 0),
+    fgaAway DECIMAL(38, 0),
+    fgPctAway DECIMAL(38, 3),
+    fg3mAway DECIMAL(38, 0),
+    fg3aAway DECIMAL(38, 0),
+    fg3PctAway DECIMAL(38, 3),
+    ftmAway DECIMAL(38, 0),
+    ftaAway DECIMAL(38, 0),
+    ftPctAway DECIMAL(38, 3),
+    orebAway DECIMAL(38, 0),
+    drebAway DECIMAL(38, 0),
+    rebAway DECIMAL(38, 0),
+    astAway DECIMAL(38, 0),
+    stlAway DECIMAL(38, 0),
+    blkAway DECIMAL(38, 0),
+    tovAway DECIMAL(38, 0),
+    pfAway DECIMAL(38, 0),
+    ptsAway DECIMAL(38, 0) NOT NULL,
+    ptsPaintAway DECIMAL(38, 0) NOT NULL,
+    pts2ndChanceAway DECIMAL(38, 0) NOT NULL,
+    ptsFbAway DECIMAL(38, 0) NOT NULL,
+    largestLeadAway DECIMAL(38, 0) NOT NULL,
+    teamTurnoversAway DECIMAL(38, 0),
+    totalTurnoversAway DECIMAL(38, 0),
+    teamReboundsAway DECIMAL(38, 0),
+    ptsOffToAway DECIMAL(38, 0),
+    teamWinsLossesAway VARCHAR(5) NOT NULL,
+    plusMinusHome DECIMAL(38, 0) NOT NULL,
+    videoAvailableHome BOOL NOT NULL,
+    wlHome VARCHAR(1),
+    fgmHome DECIMAL(38, 0),
+    fgaHome DECIMAL(38, 0),
+    fgPctHome DECIMAL(38, 3),
+    fg3mHome DECIMAL(38, 0),
+    fg3aHome DECIMAL(38, 0),
+    fg3PctHome DECIMAL(38, 3),
+    ftmHome DECIMAL(38, 0),
+    ftaHome DECIMAL(38, 0),
+    ftPctHome DECIMAL(38, 3),
+    orebHome DECIMAL(38, 0),
+    drebHome DECIMAL(38, 0),
+    rebHome DECIMAL(38, 0),
+    astHome DECIMAL(38, 0),
+    stlHome DECIMAL(38, 0),
+    blkHome DECIMAL(38, 0),
+    tovHome DECIMAL(38, 0),
+    pfHome DECIMAL(38, 0),
+    ptsHome DECIMAL(38, 0) NOT NULL,
+    ptsPaintHome DECIMAL(38, 0) NOT NULL,
+    pts2ndChance_home DECIMAL(38, 0) NOT NULL,
+    ptsFbHome DECIMAL(38, 0) NOT NULL,
+    largestLeadHome DECIMAL(38, 0) NOT NULL,
+    teamTurnoversHome DECIMAL(38, 0),
+    totalTurnoversHome DECIMAL(38, 0),
+    teamReboundsHome DECIMAL(38, 0),
+    ptsOffToHome DECIMAL(38, 0),
+    teamWinsLossesHome VARCHAR(5) NOT NULL
 );
 
 CREATE TABLE Arena (
@@ -232,26 +255,22 @@ CREATE TABLE Broadcast(
 	livePeriodTimeBcast VARCHAR(24) NOT NULL, 
 	whStatus BOOL NOT NULL,
 	PRIMARY KEY (gameID)
-    -- Foreign Key (gameID) REFERENCES Game(gameID)
 );
 
 CREATE TABLE OvertimePoints (
-    gameID DECIMAL(38, 0) NOT NULL, 
+  gameID DECIMAL(38, 0) NOT NULL, 
 	otNumber INT NOT NULL, 
 	pointsOtHome DECIMAL(38, 0), 
 	pointsOtAway DECIMAL(38, 0), 
 	PRIMARY KEY (gameID, otNumber) 
 );
 
--- FOREIGN KEY (gameID) REFERENCES Game (gameID)
 CREATE TABLE InactivePlayers (
     gameID DECIMAL(38, 0) NOT NULL, 
     playerID DECIMAL(38, 0) NOT NULL, 
 	jerseyNum DECIMAL(38, 0) DEFAULT NULL, 
 	teamID DECIMAL(38, 0) NOT NULL, 
     PRIMARY KEY (gameID, playerID)
-    --	FOREIGN KEY (gameID) REFERENCES Game(gameID),
-    --	FOREIGN KEY (playerID) REFERENCES PlayerInfo(playerID)
 );
 
 CREATE TABLE PointsPerQuarter (
@@ -260,7 +279,6 @@ CREATE TABLE PointsPerQuarter (
     pointsQuarterHome DECIMAL(38, 0),
     pointsQuarterAway DECIMAL(38, 0),
     PRIMARY KEY(gameID, quarterNumber)
-	-- FOREIGN KEY (gameID) REFERENCES Game(gameID)
 )
 
 CREATE TABLE Officials (
@@ -458,10 +476,65 @@ CREATE TABLE OtherStatsTmp (
 	pts_off_to_away DECIMAL(38, 0)
 );
 
+ALTER TABLE OtherStatsTmp
+ADD FOREIGN KEY (team_id_home) REFERENCES TeamInfo(teamID);
+ALTER TABLE OtherStatsTmp
+ADD FOREIGN KEY (team_id_away) REFERENCES TeamInfo(teamID);
+ALTER TABLE OtherStatsTmp
+ADD FOREIGN KEY (game_id) REFERENCES Game(gameID);
+ALTER TABLE GameInfoTmp
+ADD FOREIGN KEY (game_id) REFERENCES Game(gameID);
+ALTER TABLE GameSummaryTmp
+ADD FOREIGN KEY (game_id) REFERENCES Game(gameID);
+ALTER TABLE GameSummaryTmp
+ADD FOREIGN KEY (home_team_id) REFERENCES Game(gameID);
+ALTER TABLE CurrentPlayerInfo
+ADD FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID);
+ALTER TABLE HasDraftStats
+ADD FOREIGN KEY (teamID) REFERENCES HasDraftStats(teamID);
+ALTER TABLE DraftCombineStats
+ADD FOREIGN KEY (playerID) REFERENCES CurrentPlayerInfo(playerID);
+ALTER TABLE tempTeamInfo
+ADD FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID);
+ALTER TABLE Game
+ADD FOREIGN KEY (teamIDHome) REFERENCES TeamInfo(teamID);
+ALTER TABLE Game
+ADD FOREIGN KEY (teamIDAway) REFERENCES TeamInfo(teamID);
+ALTER TABLE PrevTeam
+ADD FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID);
+ALTER TABLE tempTeamHistory
+ADD FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID);
+ALTER TABLE LineScore
+ADD FOREIGN KEY (team_id_home) REFERENCES TeamInfo(teamID);
+ALTER TABLE LineScore
+ADD FOREIGN KEY (team_id_away) REFERENCES TeamInfo(teamID);
+ALTER TABLE Outcomes
+ADD FOREIGN KEY (gameID) REFERENCES Game(gameID);
+ALTER TABLE Arena
+ADD FOREIGN KEY (gameID) REFERENCES Game(gameID);
+ALTER TABLE Broadcast
+ADD FOREIGN KEY (gameID) REFERENCES Game(gameID);
+ALTER TABLE OvertimePoints
+ADD FOREIGN KEY (gameID) REFERENCES Game(gameID);
+ALTER TABLE GamePlays
+ADD FOREIGN KEY (playerID) REFERENCES CurrentPlayerInfo(playerID);
+ALTER TABLE GamePlays
+ADD FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID);
+ALTER TABLE PointsPerQuarter
+ADD FOREIGN KEY (gameID) REFERENCES Game(gameID);
+ALTER TABLE Officials
+ADD FOREIGN KEY (gameID) REFERENCES Game(gameID);
+ALTER TABLE InactivePlayers
+ADD FOREIGN KEY (gameID) REFERENCES Game(gameID);
+ALTER TABLE InactivePlayers
+ADD FOREIGN KEY (playerID) REFERENCES CurrentPlayerInfo(playerID);
+ALTER TABLE PointsPerQuarter
+ADD FOREIGN KEY (gameID) REFERENCES Game(gameID);
+
 
 -- Load data into tables
 -- Need to specify local path to csv files
-LOAD DATA LOCAL INFILE 'common_player_info.csv' 
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/common_player_info.csv' 
 INTO TABLE CurrentPlayerInfo 
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"'
@@ -504,7 +577,7 @@ IGNORE 1 LINES
     greatest75Flag
 )
 
-LOAD DATA LOCAL INFILE 'draft_history.csv' 
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/draft_history.csv' 
 INTO TABLE HasDraftStats 
 FIELDS TERMINATED BY ',' 
 IGNORE 1 LINES 
@@ -525,7 +598,7 @@ IGNORE 1 LINES
 	@player_profile_flag
 )
 
-LOAD DATA LOCAL INFILE 'draft_combine_stats.csv' 
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/draft_combine_stats.csv' 
 INTO TABLE DraftCombineStats 
 FIELDS TERMINATED BY ',' 
 IGNORE 1 LINES 
@@ -579,7 +652,7 @@ IGNORE 1 LINES
     onMoveCollege
 )
 
-LOAD DATA LOCAL INFILE 'team.csv'
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/team.csv'
 INTO TABLE TeamInfo FIELDS TERMINATED BY ',' IGNORE 1 LINES (
 	teamID, 
     @full_name, 
@@ -590,7 +663,7 @@ INTO TABLE TeamInfo FIELDS TERMINATED BY ',' IGNORE 1 LINES (
     yearFounded
 )
 
-LOAD DATA LOCAL INFILE 'team_details.csv'
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/team_details.csv'
 INTO TABLE tempTeamInfo 
 FIELDS TERMINATED BY ',' 
 IGNORE 1 LINES 
@@ -622,7 +695,7 @@ SET
     TeamInfo.instagram = tempTeamInfo.instagram, 
     TeamInfo.twitter = tempTeamInfo.twitter;
 
-LOAD DATA LOCAL INFILE 'play_by_play.csv'
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/play_by_play.csv'
 INTO TABLE GamePlays 
 FIELDS TERMINATED BY ',' 
 IGNORE 1 LINES 
@@ -640,23 +713,23 @@ IGNORE 1 LINES
     score, 
     scoreMargin, 
     @person1type, 
-    player1ID, 
-    player1Name, 
-    player1TeamID, 
+    player1_id, 
+    player1_name, 
+    player1_team_id, 
     @player1_team_city, 
     @player1_team_nickname, 
     @player1_team_abbreviation, 
     @person2type, 
-    player2ID, 
-    player2Name, 
-    player2TeamID,
+    player2_name, 
+    player2_name, 
+    player2_team_id,
     @player2_team_city, 
     @player2_team_nickname, 
     @player2_team_abbreviation, 
     @person3type, 
-    player3ID, 
-    player3Name,
-    player3TeamID, 
+    player3_id, 
+    player3_name,
+    player3_team_id, 
     @player3_team_city, 
     @player3_team_nickname, 
     @player3_team_abbreviation, 
@@ -677,24 +750,24 @@ SELECT game_id AS gameID, 3 as quarterNumber, pts_qtr3_home AS pointsQuarterHome
 UNION ALL
 SELECT game_id AS gameID, 4 as quarterNumber, pts_qtr4_home AS pointsQuarterHome, pts_qtr4_away AS pointsQuarterAway FROM LineScore;
 
-LOAD DATA LOCAL INFILE 'game.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/game.csv' IGNORE INTO
 TABLE GameTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES (
 	season_id,team_id_home,team_abbreviation_home,team_name_home,game_id,@game_date,matchup_home,wl_home,min,fgm_home,fga_home,fg_pct_home,fg3m_home,fg3a_home,fg3_pct_home,ftm_home,fta_home,ft_pct_home,oreb_home,dreb_home,reb_home,ast_home,stl_home,blk_home,tov_home,pf_home,pts_home,plus_minus_home,video_available_home,team_id_away,team_abbreviation_away,team_name_away,matchup_away,wl_away,fgm_away,fga_away,fg_pct_away,fg3m_away,fg3a_away,fg3_pct_away,ftm_away,fta_away,ft_pct_away,oreb_away,dreb_away,reb_away,ast_away,stl_away,blk_away,tov_away,pf_away,pts_away,plus_minus_away,video_available_away,season_type
 )
 SET
 game_date = STR_TO_DATE(@game_date ,'%Y-%m-%d %H:%i:%s');
 
-LOAD DATA LOCAL INFILE 'game_summary.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/game_summary.csv' IGNORE INTO
 TABLE GameSummaryTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES ()
 
-LOAD DATA LOCAL INFILE 'game_info.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/game_info.csv' IGNORE INTO
 TABLE GameInfoTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES (
 	game_id,game_date,attendance,@game_time
 )
 SET
 game_time = IF(@game_time = '', NULL, game_time);
 
-LOAD DATA LOCAL INFILE 'other_stats.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/other_stats.csv' IGNORE INTO
 TABLE GameInfoTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES ();
 
 INSERT IGNORE INTO Game (
@@ -733,7 +806,7 @@ LEFT JOIN GameSummaryTmp USING (game_id)
 LEFT JOIN (SELECT game_id, attendance, game_time FROM GameInfoTmp) AS GI using (game_id)
 LEFT JOIN (SELECT game_id, lead_changes, times_tied from OtherStatsTmp) AS OS using (game_id);
 
-LOAD DATA LOCAL INFILE 'inactive_players.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/inactive_players.csv' IGNORE INTO
 TABLE InactivePlayers FIELDS TERMINATED BY ',' IGNORE 1 LINES (
     gameID,playerID,@first_name,@last_name,jerseyNum,teamID,@team_city,@team_name,@team_abbreviation
 )
@@ -756,11 +829,10 @@ TABLE Broadcast FIELDS TERMINATED BY ',' IGNORE 1 LINES (
 	whStatus
 );
 
--- Officials
 LOAD DATA LOCAL INFILE 'officials.csv' IGNORE INTO
 TABLE Officials FIELDS TERMINATED BY ',' IGNORE 1 LINES ();
 
-LOAD DATA LOCAL INFILE 'outcomes.csv'
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/outcomes.csv'
 INTO TABLE Outcomes 
 FIELDS TERMINATED BY ',' 
 IGNORE 1 LINES 
@@ -929,10 +1001,10 @@ FROM
 INNER JOIN 
     OtherStatsTmp o ON g.game_id = o.game_id;
 
-LOAD DATA LOCAL INFILE 'other_stats.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/other_stats.csv' IGNORE INTO
 TABLE OtherStatsTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES ();
 
-LOAD DATA LOCAL INFILE 'team_history.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/team_history.csv' IGNORE INTO
 TABLE tempTeamHistory FIELDS TERMINATED BY ',' IGNORE 1 LINES ()
 
 INSERT INTO PrevTeam(
