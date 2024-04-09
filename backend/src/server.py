@@ -32,7 +32,7 @@ nbaDBConnection = mysql.connector.connect(
   host=args.mysql_host,
   user=args.mysql_user,
   password=args.mysql_password,
-  database="ece656_project",
+  database="NBA_NEW",
   port="3306",
 )
 
