@@ -48,6 +48,8 @@ def getAllTeams(dbConnection: mysql.connector.connection.MySQLConnection):
     return jsonify(json_data)
 
 def getTeam(dbConnection: mysql.connector.connection.MySQLConnection, teamId) :
+    if not dbConnection.is_connected():
+        dbConnection.reconnect(attempts=10, delay=6)
     cur = dbConnection.cursor()
     
     cur.execute("SELECT * FROM TeamInfo WHERE teamID = %s", (teamId,))
@@ -110,9 +112,8 @@ def getAllPlayer(dbConnection: mysql.connector.connection.MySQLConnection) :
     return jsonify(json_data)
 
 def getPlayer(dbConnection: mysql.connector.connection.MySQLConnection, playerId) :
-    # cur = dbConnection.cursor()
     if not dbConnection.is_connected():
-        dbConnection.reconnect(attempts=5, delay=3)
+        dbConnection.reconnect(attempts=10, delay=6)
     cur = dbConnection.cursor()
     cur.execute("SELECT * FROM CurrentPlayerInfo WHERE playerID = %s", (playerId,))
     row_headers=[x[0] for x in cur.description] #this will extract row headers

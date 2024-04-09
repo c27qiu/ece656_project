@@ -1,3 +1,5 @@
+USE ece656_project;
+
 DROP TABLE IF EXISTS CurrentPlayerInfo;
 
 CREATE TABLE CurrentPlayerInfo (
@@ -8,7 +10,7 @@ CREATE TABLE CurrentPlayerInfo (
 	school VARCHAR(31), 
 	country VARCHAR(24), 
 	lastAffiliation VARCHAR(41) NOT NULL, 
-	height VARCHAR(4), 
+	height VARCHAR(6), 
 	-- heightIn VARCHAR(4), 
 	weight DECIMAL(38, 0), 
 	seasonExp DECIMAL(38, 0) NOT NULL, 
@@ -23,9 +25,11 @@ CREATE TABLE CurrentPlayerInfo (
 	-- FOREIGN KEY (teamID) REFERENCES Team(teamID)
 );
 
-LOAD DATA LOCAL INFILE 'common_player_info.csv' 
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/common_player_info.csv' 
 INTO TABLE CurrentPlayerInfo 
 FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
 IGNORE 1 LINES 
 (
     playerID, 
@@ -63,6 +67,9 @@ IGNORE 1 LINES
     @draft_number, 
     greatest75Flag
 )
+
+CREATE INDEX idx_currentplayerinfo_teamid
+ON CurrentPlayerInfo(teamID);
 
 DROP TABLE IF EXISTS HasDraftStats;
 
@@ -221,7 +228,9 @@ CREATE TABLE TeamInfo (
 	twitter VARCHAR(35) NOT NULL
 )
 
-LOAD DATA LOCAL INFILE 'team.csv'
+CREATE INDEX idx_nickname_city ON TeamInfo (nickname, city);
+
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/team.csv'
 INTO TABLE TeamInfo FIELDS TERMINATED BY ',' IGNORE 1 LINES (
 	teamID, 
     @full_name, 
@@ -245,7 +254,7 @@ CREATE TEMPORARY TABLE tempTeamInfo (
     twitter VARCHAR(35)
 );
 
-LOAD DATA LOCAL INFILE 'team_details.csv'
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/team_details.csv'
 INTO TABLE tempTeamInfo 
 FIELDS TERMINATED BY ',' 
 IGNORE 1 LINES 
@@ -277,33 +286,49 @@ SET
     TeamInfo.instagram = tempTeamInfo.instagram, 
     TeamInfo.twitter = tempTeamInfo.twitter;
 
--- DROP TABLE IF EXISTS PrevTeam;
+DROP TABLE IF EXISTS PrevTeam;
 
--- CREATE TABLE PrevTeam (
--- 	teamID INT PRIMARY KEY, 
--- 	city VARCHAR(17) NOT NULL, 
--- 	nickname VARCHAR(13) NOT NULL, 
--- 	yearFounded DECIMAL(38, 0) NOT NULL, 
--- 	yearActiveTill DECIMAL(38, 0) NOT NULL
--- 	-- FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID),
--- )
+CREATE TABLE PrevTeam (
+	teamID INT, 
+	city VARCHAR(17) NOT NULL, 
+	nickname VARCHAR(13) NOT NULL, 
+	yearFounded DECIMAL(38, 0) NOT NULL, 
+	yearActiveTill DECIMAL(38, 0) NOT NULL,
+    PRIMARY KEY(teamID, city, nickname, yearFounded)
+	-- FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID),
+)
 
--- DROP TABLE IF EXISTS tempTeamHistory;
+DROP TABLE IF EXISTS tempTeamHistory;
 
--- CREATE TABLE tempTeamHistory (
--- 	teamID DECIMAL(38, 0) NOT NULL, 
--- 	city VARCHAR(17) NOT NULL, 
--- 	nickname VARCHAR(13) NOT NULL, 
--- 	yearFounded DECIMAL(38, 0) NOT NULL, 
--- 	yearActiveTill DECIMAL(38, 0) NOT NULL
--- );
+CREATE TABLE tempTeamHistory (
+	teamID DECIMAL(38, 0) NOT NULL, 
+	city VARCHAR(17) NOT NULL, 
+	nickname VARCHAR(13) NOT NULL, 
+	yearFounded DECIMAL(38, 0) NOT NULL, 
+	yearActiveTill DECIMAL(38, 0) NOT NULL
+);
 
--- LOAD DATA LOCAL INFILE 'team_history.csv' IGNORE INTO
--- TABLE tempTeamHistory FIELDS TERMINATED BY ',' IGNORE 1 LINES ()
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/team_history.csv' IGNORE INTO
+TABLE tempTeamHistory FIELDS TERMINATED BY ',' IGNORE 1 LINES ()
 
 -- INSERT INTO PrevTeam (teamID, teamNum, city, nickname, yearFounded, yearActiveTill)
 -- SELECT teamID, COUNT(*) OVER (PARTITION BY teamID ORDER BY yearFounded) as teamNum, city, nickname, yearFounded, yearActiveTill
 -- FROM tempTeamHistory;
+INSERT INTO PrevTeam(
+	teamID, 
+	city, 
+	nickname, 
+	yearFounded, 
+	yearActiveTill
+)
+SELECT teamID AS teamID, city as city, nickname AS nickname, yearFounded AS yearFounded, yearActiveTill AS yearActiveTill FROM tempTeamHistory
+-- UNION ALL
+-- SELECT teamID AS teamID, city as city, nickname AS nickname, yearFounded AS yearFounded, yearActiveTill AS yearActiveTill FROM tempTeamHistory
+-- UNION ALL
+-- SELECT teamID AS teamID, city as city, nickname AS nickname, yearFounded AS yearFounded, yearActiveTill AS yearActiveTill FROM tempTeamHistory
+-- UNION ALL
+-- SELECT teamID AS teamID, city as city, nickname AS nickname, yearFounded AS yearFounded, yearActiveTill AS yearActiveTill FROM tempTeamHistory;
+
 
 DROP TABLE IF EXISTS GamePlays;
 
@@ -320,14 +345,80 @@ CREATE TABLE GamePlays (
 	descriptionVisitor VARCHAR(200),
 	score VARCHAR(10) NOT NULL,
 	scoreMargin INT NOT NULL,
+    player1_id INT, 
+    player1_name VARCHAR(50), 
+    player1_team_id INT, 
+    player2_id INT, 
+    player2_name VARCHAR(50), 
+    player2_team_id INT,
+    player3_id INT, 
+    player3_name VARCHAR(50), 
+    player3_team_id INT,
 	videoAvailableFlag BOOL,
 	PRIMARY KEY (gameID, eventNum)
 	-- FOREIGN KEY (playerID) REFERENCES CurrentPlayerInfo(playerID),
 	-- FOREIGN KEY (teamID) REFERENCES TeamInfo(teamID)
 )
 
-LOAD DATA LOCAL INFILE 'play_by_play.csv'
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/play_by_play.csv'
 INTO TABLE GamePlays 
+FIELDS TERMINATED BY ',' 
+IGNORE 1 LINES 
+(
+    gameID, 
+    eventNum, 
+    eventMsgType, 
+    eventMsgActionType, 
+    period, 
+    wctimestring, 
+    pctimestring, 
+    descriptionHome, 
+    descriptionNeutral, 
+    descriptionVisitor, 
+    score, 
+    scoreMargin, 
+    @person1type, 
+    player1ID, 
+    player1Name, 
+    player1TeamID, 
+    @player1_team_city, 
+    @player1_team_nickname, 
+    @player1_team_abbreviation, 
+    @person2type, 
+    player2ID, 
+    player2Name, 
+    player2TeamID,
+    @player2_team_city, 
+    @player2_team_nickname, 
+    @player2_team_abbreviation, 
+    @person3type, 
+    player3ID, 
+    player3Name,
+    player3TeamID, 
+    @player3_team_city, 
+    @player3_team_nickname, 
+    @player3_team_abbreviation, 
+    videoAvailableFlag
+)
+
+
+INSERT INTO PointsPerQuarter(
+	gameID, 
+	quarterNumber,
+	pointsQuarterHome, 
+	pointsQuarterAway
+)
+SELECT game_id AS gameID, 1 as quarterNumber, pts_qtr1_home AS pointsQuarterHome, pts_qtr1_away AS pointsQuarterAway FROM LineScore
+UNION ALL
+SELECT game_id AS gameID, 2 as quarterNumber, pts_qtr2_home AS pointsQuarterHome, pts_qtr2_away AS pointsQuarterAway FROM LineScore
+UNION ALL
+SELECT game_id AS gameID, 3 as quarterNumber, pts_qtr3_home AS pointsQuarterHome, pts_qtr3_away AS pointsQuarterAway FROM LineScore
+UNION ALL
+SELECT game_id AS gameID, 4 as quarterNumber, pts_qtr4_home AS pointsQuarterHome, pts_qtr4_away AS pointsQuarterAway FROM LineScore;
+DROP TABLE IF EXISTS LineScore;
+
+LOAD DATA LOCAL INFILE 'play_by_play.csv'
+INTO TABLE GamePlaysPlayer 
 FIELDS TERMINATED BY ',' 
 IGNORE 1 LINES 
 (
@@ -365,15 +456,4 @@ IGNORE 1 LINES
     @player3_team_nickname, 
     @player3_team_abbreviation, 
     videoAvailableFlag
-)
-
-CREATE TABLE GamePlaysPlayer (
-	gameID INT PRIMARY KEY,
-	eventNum INT PRIMARY KEY,
-	playerNum INT NOT NULL,
-	playerID INT NOT NULL,
-	teamID INT NOT NULL,
-	personType VARCHAR(5) NOT NULL,
-	FOREIGN KEY (gameID) REFERENCES GamePlays(gameID),
-	FOREIGN KEY (eventNum) REFERENCES GamePlays(eventNum),
 )

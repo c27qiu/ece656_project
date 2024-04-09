@@ -1,4 +1,4 @@
-USE NBA_NEW;
+USE ece656_project;
 
 -- Create tables to represent the data model
 
@@ -74,6 +74,8 @@ CREATE TABLE Outcomes(
 	pts DECIMAL(38, 0) NOT NULL,
     FOREIGN KEY (gameID) REFERENCES Game (gameID)
 );
+
+
 
 CREATE TABLE OvertimePoints (
     gameID DECIMAL(38, 0) NOT NULL, 
@@ -192,9 +194,12 @@ CREATE TABLE GameTmp (
 	video_available_away BOOL NOT NULL, 
 	season_type VARCHAR(14) NOT NULL
 );
-LOAD DATA LOCAL INFILE 'game.csv' IGNORE INTO
+
+-- DROP TABLE IF EXISTS Game;
+
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/game.csv' IGNORE INTO
 TABLE GameTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES (
-	season_id,team_id_home,team_abbreviation_home,team_name_home,@game_id,@game_date,matchup_home,wl_home,min,fgm_home,fga_home,fg_pct_home,fg3m_home,fg3a_home,fg3_pct_home,ftm_home,fta_home,ft_pct_home,oreb_home,dreb_home,reb_home,ast_home,stl_home,blk_home,tov_home,pf_home,pts_home,plus_minus_home,video_available_home,team_id_away,team_abbreviation_away,team_name_away,matchup_away,wl_away,fgm_away,fga_away,fg_pct_away,fg3m_away,fg3a_away,fg3_pct_away,ftm_away,fta_away,ft_pct_away,oreb_away,dreb_away,reb_away,ast_away,stl_away,blk_away,tov_away,pf_away,pts_away,plus_minus_away,video_available_away,season_type
+	season_id,team_id_home,team_abbreviation_home,team_name_home,game_id,@game_date,matchup_home,wl_home,min,fgm_home,fga_home,fg_pct_home,fg3m_home,fg3a_home,fg3_pct_home,ftm_home,fta_home,ft_pct_home,oreb_home,dreb_home,reb_home,ast_home,stl_home,blk_home,tov_home,pf_home,pts_home,plus_minus_home,video_available_home,team_id_away,team_abbreviation_away,team_name_away,matchup_away,wl_away,fgm_away,fga_away,fg_pct_away,fg3m_away,fg3a_away,fg3_pct_away,ftm_away,fta_away,ft_pct_away,oreb_away,dreb_away,reb_away,ast_away,stl_away,blk_away,tov_away,pf_away,pts_away,plus_minus_away,video_available_away,season_type
 )
 SET
 game_date = STR_TO_DATE(@game_date ,'%Y-%m-%d %H:%i:%s');
@@ -218,7 +223,7 @@ CREATE TABLE  GameSummaryTmp (
 	live_period_time_bcast VARCHAR(24) NOT NULL, 
 	wh_status BOOL NOT NULL
 );
-LOAD DATA LOCAL INFILE 'game_summary.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/game_summary.csv' IGNORE INTO
 TABLE GameSummaryTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES ()
 
 DROP TABLE IF EXISTS GameInfoTmp;
@@ -229,12 +234,11 @@ CREATE TABLE GameInfoTmp (
 	game_time VARCHAR(6)
 );
 
-LOAD DATA LOCAL INFILE 'game_info.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/game_info.csv' IGNORE INTO
 TABLE GameInfoTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES (
 	game_id,game_date,attendance,@game_time
 )SET
-game_time = IF(@game_time = '', NULL, game_time)
-;
+game_time = IF(@game_time = '', NULL, game_time);
 
 DROP TABLE IF EXISTS OtherStatsTmp;
 CREATE TABLE OtherStatsTmp (
@@ -267,7 +271,7 @@ CREATE TABLE OtherStatsTmp (
 );
 
 
-LOAD DATA LOCAL INFILE 'other_stats.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/other_stats.csv' IGNORE INTO
 TABLE GameInfoTmp FIELDS TERMINATED BY ',' IGNORE 1 LINES ();
 
 INSERT IGNORE INTO Game (
@@ -308,7 +312,7 @@ LEFT JOIN (SELECT game_id, lead_changes, times_tied from OtherStatsTmp) AS OS us
 
 
 -- Inactive Players
-LOAD DATA LOCAL INFILE 'inactive_players.csv' IGNORE INTO
+LOAD DATA LOCAL INFILE 'C:/Users/Cathy Qiu/Downloads/Github/ECE656/ece656_project/csv/inactive_players.csv' IGNORE INTO
 TABLE InactivePlayers FIELDS TERMINATED BY ',' IGNORE 1 LINES (
     gameID,playerID,@first_name,@last_name,jerseyNum,teamID,@team_city,@team_name,@team_abbreviation
 )
